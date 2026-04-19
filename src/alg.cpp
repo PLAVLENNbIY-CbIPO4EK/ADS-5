@@ -1,8 +1,10 @@
 // Copyright 2025 NNTU-CS
+#include "alg.h"
+#include "tstack.h"
+
+#include <cctype>
 #include <string>
 #include <map>
-#include "tstack.h"
-#include <cctype>
 
 int priority(char s) {
   if (s == '+' || s == '-') return 1;
@@ -13,9 +15,12 @@ int priority(char s) {
 std::string infx2pstfx(const std::string& inf) {
   TStack<char, 100> s;
   std::string str = "";
-  for (int i = 0; i < (int)inf.size(); i++) {
+
+  for (int i = 0; i < static_cast<int>(inf.size()); i++) {
+    if (isspace(inf[i])) continue;
+
     if (isdigit(inf[i])) {
-      while (i < (int)inf.size() && isdigit(inf[i])) {
+      while (i < static_cast<int>(inf.size()) && isdigit(inf[i])) {
         str += inf[i];
         i++;
       }
@@ -29,7 +34,7 @@ std::string infx2pstfx(const std::string& inf) {
         str += ' ';
         s.pop();
       }
-      s.pop();
+      if (!s.isEmpty()) s.pop();
     } else {
       while (!s.isEmpty() && priority(s.top()) >= priority(inf[i])) {
         str += s.top();
@@ -39,37 +44,47 @@ std::string infx2pstfx(const std::string& inf) {
       s.push(inf[i]);
     }
   }
+
   while (!s.isEmpty()) {
     str += s.top();
     str += ' ';
     s.pop();
   }
+
   return str;
 }
 
 int eval(const std::string& pref) {
   TStack<int, 100> str;
   const std::string& n = pref;
-  for (int i = 0; i < (int)n.size(); i++) {
+
+  for (int i = 0; i < static_cast<int>(n.size()); i++) {
+    if (isspace(n[i])) continue;
+
     if (isdigit(n[i])) {
       int num = 0;
-      while (i < (int)n.size() && isdigit(n[i])) {
+      while (i < static_cast<int>(n.size()) && isdigit(n[i])) {
         num = num * 10 + (n[i] - '0');
         i++;
       }
       str.push(num);
       i--;
     } else if (n[i] == '+' || n[i] == '-' ||
-             n[i] == '*' || n[i] == '/') {
-      int b = str.top(); str.pop();
-      int a = str.top(); str.pop();
+               n[i] == '*' || n[i] == '/') {
+      int b = str.top();
+      str.pop();
+      int a = str.top();
+      str.pop();
+
       int res = 0;
       if (n[i] == '+') res = a + b;
       else if (n[i] == '-') res = a - b;
       else if (n[i] == '*') res = a * b;
       else if (n[i] == '/') res = a / b;
+
       str.push(res);
     }
   }
+
   return str.top();
 }
