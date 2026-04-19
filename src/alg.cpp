@@ -50,7 +50,6 @@ std::string infx2pstfx(const std::string& inf) {
     str += ' ';
     s.pop();
   }
-  
   if (!str.empty() && str.back() == ' ') {
     str.pop_back();
   }
