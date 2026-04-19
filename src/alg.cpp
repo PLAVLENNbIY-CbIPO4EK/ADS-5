@@ -1,10 +1,10 @@
 // Copyright 2025 NNTU-CS
 #include "alg.h"
-#include "tstack.h"
 
 #include <cctype>
 #include <string>
-#include <map>
+
+#include "tstack.h"
 
 int priority(char s) {
   if (s == '+' || s == '-') return 1;
